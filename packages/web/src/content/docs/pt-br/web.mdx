@@ -1,0 +1,142 @@
+﻿---
+title: Web
+description: Usando o opencode no seu navegador.
+---
+
+O opencode pode ser executado como uma aplicaÃ§Ã£o web no seu navegador, proporcionando a mesma poderosa experiÃªncia de codificaÃ§Ã£o com IA sem precisar de um terminal.
+
+![opencode Web - Nova SessÃ£o](../../../assets/web/web-homepage-new-session.png)
+
+## Primeiros passos
+
+Inicie a interface web executando:
+
+```bash
+opencode web
+```
+
+Isso inicia um servidor local em `127.0.0.1` com uma porta aleatÃ³ria disponÃ­vel e abre automaticamente o opencode no seu navegador padrÃ£o.
+
+:::caution
+Se `AO1_SERVER_PASSWORD` nÃ£o estiver definido, o servidor ficarÃ¡ sem seguranÃ§a. Isso Ã© aceitÃ¡vel para uso local, mas deve ser configurado para acesso Ã  rede.
+:::
+
+:::tip[UsuÃ¡rios do Windows]
+Para a melhor experiÃªncia, execute `opencode web` a partir do [WSL](/docs/windows-wsl) em vez do PowerShell. Isso garante acesso adequado ao sistema de arquivos e integraÃ§Ã£o com o terminal.
+:::
+
+---
+
+## ConfiguraÃ§Ã£o
+
+VocÃª pode configurar o servidor web usando flags de linha de comando ou no seu [arquivo de configuraÃ§Ã£o](/docs/config).
+
+### Porta
+
+Por padrÃ£o, o opencode escolhe uma porta disponÃ­vel. VocÃª pode especificar uma porta:
+
+```bash
+opencode web --port 4096
+```
+
+### Nome do Host
+
+Por padrÃ£o, o servidor se vincula a `127.0.0.1` (apenas localhost). Para tornar o opencode acessÃ­vel na sua rede:
+
+```bash
+opencode web --hostname 0.0.0.0
+```
+
+Ao usar `0.0.0.0`, o opencode exibirÃ¡ endereÃ§os locais e de rede:
+
+```
+  Local access:       http://localhost:4096
+  Network access:     http://192.168.1.100:4096
+```
+
+### Descoberta mDNS
+
+Ative o mDNS para tornar seu servidor descobrÃ­vel na rede local:
+
+```bash
+opencode web --mdns
+```
+
+Isso define automaticamente o nome do host como `0.0.0.0` e anuncia o servidor como `opencode.local`.
+
+VocÃª pode personalizar o nome de domÃ­nio mDNS para executar vÃ¡rias instÃ¢ncias na mesma rede:
+
+```bash
+opencode web --mdns --mdns-domain myproject.local
+```
+
+### CORS
+
+Para permitir domÃ­nios adicionais para CORS (Ãºtil para frontends personalizados):
+
+```bash
+opencode web --cors https://example.com
+```
+
+### AutenticaÃ§Ã£o
+
+Para proteger o acesso, defina uma senha usando a variÃ¡vel de ambiente `AO1_SERVER_PASSWORD`:
+
+```bash
+AO1_SERVER_PASSWORD=secret opencode web
+```
+
+O nome de usuÃ¡rio padrÃ£o Ã© `opencode`, mas pode ser alterado com `AO1_SERVER_USERNAME`.
+
+---
+
+## Usando a Interface Web
+
+Uma vez iniciada, a interface web fornece acesso Ã s suas sessÃµes do opencode.
+
+### SessÃµes
+
+Visualize e gerencie suas sessÃµes a partir da pÃ¡gina inicial. VocÃª pode ver sessÃµes ativas e iniciar novas.
+
+![opencode Web - SessÃ£o Ativa](../../../assets/web/web-homepage-active-session.png)
+
+### Status do Servidor
+
+Clique em "Ver Servidores" para visualizar os servidores conectados e seu status.
+
+![opencode Web - Ver Servidores](../../../assets/web/web-homepage-see-servers.png)
+
+---
+
+## Anexando um Terminal
+
+VocÃª pode anexar um terminal TUI a um servidor web em execuÃ§Ã£o:
+
+```bash
+# Start the web server
+opencode web --port 4096
+
+# In another terminal, attach the TUI
+opencode attach http://localhost:4096
+```
+
+Isso permite que vocÃª use tanto a interface web quanto o terminal simultaneamente, compartilhando as mesmas sessÃµes e estado.
+
+---
+
+## Arquivo de ConfiguraÃ§Ã£o
+
+VocÃª tambÃ©m pode configurar as configuraÃ§Ãµes do servidor no seu arquivo de configuraÃ§Ã£o `opencode.json`:
+
+```json
+{
+  "server": {
+    "port": 4096,
+    "hostname": "0.0.0.0",
+    "mdns": true,
+    "cors": ["https://example.com"]
+  }
+}
+```
+
+As flags de linha de comando tÃªm precedÃªncia sobre as configuraÃ§Ãµes do arquivo de configuraÃ§Ã£o.

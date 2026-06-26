@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=AO1
+Exec=/opt/AO1/ai.ao1.desktop %U
+Terminal=false
+Type=Application
+Icon=ai.ao1.desktop
+StartupWMClass=ai.ao1.desktop
+NoDisplay=true
+Comment=AI-powered development tool
+Categories=Development;

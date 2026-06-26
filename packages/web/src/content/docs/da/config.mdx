@@ -1,0 +1,688 @@
+﻿---
+title: Konfiguration
+description: Ved at bruge OpenCode JSON konfig.
+---
+
+Du kan konfigurere OpenCode ved hjÃ¦lp af en JSON-konfigurationsfil.
+
+---
+
+## Format
+
+OpenCode understÃ¸tter bÃ¥de **JSON** og **JSONC** (JSON med kommentarer) formater.
+
+```jsonc title="opencode.jsonc"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "autoupdate": true,
+  "server": {
+    "port": 4096,
+  },
+}
+```
+
+---
+
+## Placeringer
+
+Du kan placere din konfiguration et par forskellige steder, og de har en
+forskellig rÃ¦kkefÃ¸lge.
+
+:::note
+Konfigurationsfiler **flettes sammen**, erstattes ikke.
+:::
+
+Konfigurationsfiler flettes sammen, erstattes ikke. Indstillinger fra fÃ¸lgende konfigurationssteder kombineret. Senere konfigurationer tilsidesÃ¦tter kun tidligere konfigurationer for modstridende nÃ¸gler. Ikke-modstridende indstillinger fra alle konfigurationer bevares.
+
+For eksempel, hvis dine globale konfigurationssÃ¦t `autoupdate: true`, og dine projektkonfigurationssÃ¦t `model: "anthropic/claude-sonnet-4-5"`, vil den endelige konfiguration integrere begge indstillinger.
+
+---
+
+### PrioritetsrÃ¦kkefÃ¸lge
+
+Konfigurationskilder indlÃ¦ses i denne rÃ¦kkefÃ¸lge (senere kilder tilsidesÃ¦tter tidligere):
+
+1. **Fjernkonfiguration** (fra `.well-known/opencode`) - organisatoriske standardindstillinger
+2. **Global config** (`~/.config/opencode/opencode.json`) - brugerprÃ¦ferencer
+3. **Tilpasset konfiguration** (`AO1_CONFIG` env var) - tilpassede tilsidesÃ¦ttelser
+4. **Project config** (`opencode.json` i projekt) - projektspecifikke indstillinger
+5. **`.opencode` mapper** - agent, kommandoer, plugins
+6. **Inline config** (`AO1_CONFIG_CONTENT` env var) - runtime tilsidesÃ¦ttelser
+
+Dette betyder, at projektkonfigurationer kan tilsidesÃ¦tte globale standardindstillinger, og globale konfigurationer kan tilsidesÃ¦tte eksterne organisatoriske standarder.
+
+:::note
+`.opencode` og `~/.config/opencode` mapperne bruger **flertalsnavne** for undermapper: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` og `themes/`. Enkelte navne (f.eks. `agent/`) understÃ¸tter ogsÃ¥ bagudkompatibilitet.
+:::
+
+---
+
+### Ekstern konfiguration
+
+Organisationer kan levere standardkonfiguration via `.well-known/opencode`-slutpunktet. Dette hentes automatisk, nÃ¥r du godkender med en udbyder, der understÃ¸tter det.
+
+Remote config indlÃ¦ses fÃ¸rst og fungerer som basislaget. Alle andre konfigurationskilder (global, projekt) kan tilsidesÃ¦tte disse standardindstillinger.
+
+Hvis din organisation f.eks. leverer MCP-servere, der er deaktiveret som standard:
+
+```json title="Remote config from .well-known/opencode"
+{
+  "mcp": {
+    "jira": {
+      "type": "remote",
+      "url": "https://jira.example.com/mcp",
+      "enabled": false
+    }
+  }
+}
+```
+
+Du kan aktivere specifikke servere i din lokale konfiguration:
+
+```json title="opencode.json"
+{
+  "mcp": {
+    "jira": {
+      "type": "remote",
+      "url": "https://jira.example.com/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+---
+
+### Global
+
+Placer din globale OpenCode-konfiguration i `~/.config/opencode/opencode.json`. Brug global konfiguration til brugerdÃ¦kkende prÃ¦ferencer som temaer, udbydere eller nÃ¸glebindinger.
+
+Global config tilsidesÃ¦tter eksterne organisatoriske standarder.
+
+---
+
+### Projekt-niveau
+
+TilfÃ¸j `opencode.json` i dit projektrod. Project config har den hÃ¸jeste forrang blandt standard config-filer - den tilsidesÃ¦tter bÃ¥de globale og eksterne config.
+
+:::tip
+Placer projektspecifik konfiguration i roden af â€‹â€‹dit projekt.
+:::
+
+NÃ¥r OpenCode starter op, sÃ¸ger den efter en konfigurationsfil i den aktuelle mappe eller gÃ¥r op til den nÃ¦rmeste Git-mappe.
+
+Dette er ogsÃ¥ sikkert at blive tjekket ind i Git og bruger det samme skema som det globale.
+
+---
+
+### Brugerdefineret sti
+
+Angiv en brugerdefineret konfigurationsfilsti ved hjÃ¦lp af miljÃ¸variablen `AO1_CONFIG`.
+
+```bash
+export AO1_CONFIG=/path/to/my/custom-config.json
+opencode run "Hello world"
+```
+
+Brugerdefineret konfigurationsindlÃ¦ses mellem globale konfigurationer og projektkonfigurationer i prioriteret rÃ¦kkefÃ¸lge.
+
+---
+
+### Brugerdefineret mappe
+
+Angiv en brugerdefineret konfigurationsmappe ved hjÃ¦lp af `AO1_CONFIG_DIR`
+miljÃ¸variabel. Dette kort vil blive sÃ¸gt efter agenter, kommandoer,
+modes og plugins ligesom standard `.opencode` mappen, og bÃ¸r
+fÃ¸lge samme struktur.
+
+```bash
+export AO1_CONFIG_DIR=/path/to/my/config-directory
+opencode run "Hello world"
+```
+
+Den brugerdefinerede mappe indlÃ¦ses efter den globale konfig og `.opencode` mapper, sÃ¥ den **kan tilsidesÃ¦tte** deres indstillinger.
+
+---
+
+## Skema
+
+Konfigurationsfilen har et skema, der defineres i [**`opencode.ai/config.json`**](https://opencode.ai/config.json).
+
+Din editor skal vÃ¦re i stand til at validere og autofuldfÃ¸re baseret pÃ¥ skemaet.
+
+---
+
+### TUI
+
+Du kan konfigurere TUI-specifikke indstillinger gennem indstillingen `tui`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "tui": {
+    "scroll_speed": 3,
+    "scroll_acceleration": {
+      "enabled": true
+    },
+    "diff_style": "auto"
+  }
+}
+```
+
+TilgÃ¦ngelige muligheder:
+
+- `scroll_acceleration.enabled` - Aktiver macOS-stil rulleacceleration. **Har forrang frem for `scroll_speed`.**
+- `scroll_speed` - Brugerdefineret rullehastighedsmultiplikator (standard: `3`, minimum: `1`). Ignoreres, hvis `scroll_acceleration.enabled` er `true`.
+- `diff_style` - Kontroller diff-gengivelse. `"auto"` tilpasser sig terminalbredden, `"stacked"` viser altid en enkelt kolonne.
+
+[Learn more about using the TUI here](/docs/tui).
+
+---
+
+### Server
+
+Du kan konfigurere serverindstillinger for kommandoerne `opencode serve` og `opencode web` gennem indstillingen `server`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "server": {
+    "port": 4096,
+    "hostname": "0.0.0.0",
+    "mdns": true,
+    "mdnsDomain": "myproject.local",
+    "cors": ["http://localhost:5173"]
+  }
+}
+```
+
+TilgÃ¦ngelige muligheder:
+
+- `port` - Port til at lytte pÃ¥.
+- `hostname` - VÃ¦rtsnavn at lytte pÃ¥. NÃ¥r `mdns` er aktiveret, og der ikke er angivet noget vÃ¦rtsnavn, er standarden `0.0.0.0`.
+- `mdns` - Aktiver mDNS-tjenesteopdagelse. Dette gÃ¸r det muligt for andre enheder pÃ¥ netvÃ¦rket at opdage din OpenCode-server.
+- `mdnsDomain` - Brugerdefineret domÃ¦nenavn til mDNS-tjeneste. Som standard er `opencode.local`. Nyttigt til at kÃ¸re flere forekomster pÃ¥ det samme netvÃ¦rk.
+- `cors` - Yderligere oprindelser for at tillade CORS ved brug af HTTP-serveren fra en browserbaseret klient. VÃ¦rdier skal vÃ¦re fulde oprindelser (skema + vÃ¦rt + valgfri port), f.eks. `https://app.example.com`.
+
+[Learn more about the server here](/docs/server).
+
+---
+
+### VÃ¦rktÃ¸jer (`tools`)
+
+Du kan administrere de vÃ¦rktÃ¸jer, en LLM kan bruge, gennem indstillingen `tools`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "tools": {
+    "write": false,
+    "bash": false
+  }
+}
+```
+
+[Learn more about tools here](/docs/tools).
+
+---
+
+### Modeller (`models`)
+
+Du kan konfigurere de udbydere og modeller, du vil bruge i din OpenCode-konfiguration, gennem mulighederne `provider`, `model` og `small_model`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {},
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5"
+}
+```
+
+Indstillingen `small_model` konfigurerer en separat model til lette opgaver som titelgenerering. Som standard forsÃ¸ger OpenCode at bruge en billigere model, hvis en er tilgÃ¦ngelig fra din udbyder, ellers falder den tilbage til din hovedmodel.
+
+Udbydermuligheder kan omfatte `timeout` og `setCacheKey`:
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "anthropic": {
+      "options": {
+        "timeout": 600000,
+        "setCacheKey": true
+      }
+    }
+  }
+}
+```
+
+- `timeout` - Anmodningstimeout i millisekunder (standard: 300000). Indstil til `false` for at deaktivere.
+- `setCacheKey` - SÃ¸rg for, at en cache-nÃ¸gle altid er indstillet til den udpegede udbyder.
+
+Du kan ogsÃ¥ konfigurere [local models](/docs/models#local). [Learn more](/docs/models).
+
+---
+
+#### Udbyder-specifikke muligheder
+
+Nogle udbydere understÃ¸tter yderligere konfigurationsmuligheder ud over de generiske `timeout` og `apiKey` indstillinger.
+
+##### Amazon Bedrock
+
+Amazon Bedrock understÃ¸tter AWS-specifik konfiguration:
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "amazon-bedrock": {
+      "options": {
+        "region": "us-east-1",
+        "profile": "my-aws-profile",
+        "endpoint": "https://bedrock-runtime.us-east-1.vpce-xxxxx.amazonaws.com"
+      }
+    }
+  }
+}
+```
+
+- `region` - AWS region for Bedrock (standard til `AWS_REGION` env var eller `us-east-1`)
+- `profile` - AWS navngivet profil fra `~/.aws/credentials` (standard til `AWS_PROFILE` env var)
+- `endpoint` - Brugerdefineret slutpunkt URL for VPC-endepunkter. Dette er et alias for den generiske `baseURL`-indstilling, der bruger AWS-specifik terminologi. Hvis begge er angivet, har `endpoint` forrang.
+
+:::note
+Bearer tokens (`AWS_BEARER_TOKEN_BEDROCK` eller `/connect`) har forrang over profilbaseret godkendelse. Se [authentication precedence](/docs/providers#authentication-precedence) for detaljer.
+:::
+
+[Learn more about Amazon Bedrock configuration](/docs/providers#amazon-bedrock).
+
+---
+
+### Temaer (`themes`)
+
+Du kan konfigurere det tema, du vil bruge i din OpenCode-konfiguration, gennem indstillingen `theme`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": ""
+}
+```
+
+[Learn more here](/docs/themes).
+
+---
+
+### Agent
+
+Du kan konfigurere opgaver specialiserede agenter til specifikke indstillinger gennem indstillingen `agent`.
+
+```jsonc title="opencode.jsonc"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "code-reviewer": {
+      "description": "Reviews code for best practices and potential issues",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
+      "tools": {
+        // Disable file modification tools for review-only agent
+        "write": false,
+        "edit": false,
+      },
+    },
+  },
+}
+```
+
+Du kan ogsÃ¥ definere agenter ved at bruge markdown-filer i `~/.config/opencode/agents/` eller `.opencode/agents/`. [Learn more here](/docs/agents).
+
+---
+
+### Standardagent (`default_agent`)
+
+Du kan indstille standardagenten ved at bruge indstillingen `default_agent`. Dette bestemmer, hvilken agent der bruges, nÃ¥r ingen er eksplicit angivet.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "plan"
+}
+```
+
+Standardagenten skal vÃ¦re en primÃ¦r agent (ikke en subagent). Dette kan vÃ¦re en indbygget agent som `"build"` eller `"plan"`, eller en [custom agent](/docs/agents), du har defineret. Hvis den angivne agent ikke eksisterer eller er en underagent, vil OpenCode falde tilbage til `"build"` med en advarsel.
+
+Denne indstilling gÃ¦lder pÃ¥ tvÃ¦rs af alle grÃ¦nseflader: TUI, CLI (`opencode run`), desktop-app og GitHub Action.
+
+---
+
+### Deling (`share`)
+
+Du kan konfigurere funktionen [share](/docs/share) gennem indstillingen `share`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "share": "manual"
+}
+```
+
+Dette krÃ¦ver:
+
+- `"manual"` - Tillad manuel deling via kommandoer (standard)
+- `"auto"` - Del automatisk nye samtaler
+- `"disabled"` - Deaktiver deling helt
+
+Som standard er deling indstillet til manuel tilstand, hvor du eksplicit skal dele samtaler ved hjÃ¦lp af kommandoen `/share`.
+
+---
+
+### Kommandoer (`command`)
+
+Du kan konfigurere brugerdefinerede kommandoer til gentagne opgaver gennem indstillingen `command`.
+
+```jsonc title="opencode.jsonc"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "command": {
+    "test": {
+      "template": "Run the full test suite with coverage report and show any failures.\nFocus on the failing tests and suggest fixes.",
+      "description": "Run tests with coverage",
+      "agent": "build",
+      "model": "anthropic/claude-haiku-4-5",
+    },
+    "component": {
+      "template": "Create a new React component named $ARGUMENTS with TypeScript support.\nInclude proper typing and basic structure.",
+      "description": "Create a new component",
+    },
+  },
+}
+```
+
+Du kan ogsÃ¥ definere kommandoer ved hjÃ¦lp af markdown-filer i `~/.config/opencode/commands/` eller `.opencode/commands/`. [Learn more here](/docs/commands).
+
+---
+
+### Tastebindinger (`keybinds`)
+
+Du kan tilpasse dine nÃ¸glebindinger gennem indstillingen `keybinds`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "keybinds": {}
+}
+```
+
+[Learn more here](/docs/keybinds).
+
+---
+
+### Auto-opdatering (`autoupdate`)
+
+OpenCode vil automatisk downloade alle nye opdateringer, nÃ¥r den starter op. Du kan deaktivere dette med indstillingen `autoupdate`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false
+}
+```
+
+Hvis du ikke Ã¸nsker opdatering, men Ã¸nsker at blive underrettet, nÃ¥r en ny version er tilgÃ¦ngelig, skal du indstille `autoupdate` til `"notify"`.
+BemÃ¦rk, at dette kun virker, hvis det ikke blev installeret ved hjÃ¦lp af en pakkehÃ¥ndtering sÃ¥som Homebrew.
+
+---
+
+### Formater (`formatter`)
+
+Du kan konfigurere kodeformatere gennem indstillingen `formatter`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "formatter": {
+    "prettier": {
+      "disabled": true
+    },
+    "custom-prettier": {
+      "command": ["npx", "prettier", "--write", "$FILE"],
+      "environment": {
+        "NODE_ENV": "development"
+      },
+      "extensions": [".js", ".ts", ".jsx", ".tsx"]
+    }
+  }
+}
+```
+
+[Learn more about formatters here](/docs/formatters).
+
+---
+
+### Tilladelse (`permission`)
+
+Som standard opencode **tillader alle operationer** uden at krÃ¦ve eksplicit godkendelse. Du kan Ã¦ndre dette ved at bruge indstillingen `permission`.
+
+For at sikre, at vÃ¦rktÃ¸jerne `edit` og `bash` for eksempel krÃ¦ver brugergodkendelse:
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "edit": "ask",
+    "bash": "ask"
+  }
+}
+```
+
+[Learn more about permissions here](/docs/permissions).
+
+---
+
+### Komprimering (`compaction`)
+
+Du kan styre kontekstkomprimeringsadfÃ¦rd gennem indstillingen `compaction`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "compaction": {
+    "auto": true,
+    "prune": false,
+    "reserved": 10000
+  }
+}
+```
+
+- `auto` - Komprimer automatisk sessionen, nÃ¥r konteksten er fuld (standard: `true`).
+- `prune` - Fjern gamle vÃ¦rktÃ¸jsudgange for at gemme tokens (standard: `false`).
+- `reserved` - Tokenbuffer til komprimering. Efterlader nok vindue til at undgÃ¥ overlÃ¸b under komprimering
+
+---
+
+### OvervÃ¥gning (`watcher`)
+
+Du kan konfigurere ignoreringsmÃ¸nstre for filovervÃ¥ger gennem indstillingen `watcher`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "watcher": {
+    "ignore": ["node_modules/**", "dist/**", ".git/**"]
+  }
+}
+```
+
+MÃ¸nstre fÃ¸lger glob-syntaks. Brug dette til at udelukke stÃ¸jende mapper fra filvisning.
+
+---
+
+### MCP
+
+Du kan konfigurere MCP-servere, som du vil bruge, gennem indstillingen `mcp`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {}
+}
+```
+
+[Learn more here](/docs/mcp-servers).
+
+---
+
+### Plugin
+
+[Plugins](/docs/plugins) udvide OpenCode med brugerdefinerede vÃ¦rktÃ¸jer, kroge og integrationer.
+
+Placer plugin-filer i `.opencode/plugins/` eller `~/.config/opencode/plugins/`. Du kan ogsÃ¥ indlÃ¦se plugins fra npm gennem indstillingen `plugin`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+}
+```
+
+[Learn more here](/docs/plugins).
+
+---
+
+### Instruktioner (`instructions`)
+
+Du kan konfigurere brugervejledningen til den model, du kan gennem indstillingen `instructions`.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["CONTRIBUTING.md", "docs/guidelines.md", ".cursor/rules/*.md"]
+}
+```
+
+Dette krÃ¦ver en rÃ¦kke stier og globmÃ¸nstre til instruktionsfiler. [LÃ¦s mere
+om regler her](/docs/rules).
+
+---
+
+### Deaktiverede udbydere (`disabled_providers`)
+
+Du kan deaktivere udbydere, der indlÃ¦ses automatisk gennem `disabled_providers`-indstillingen. Dette er nyttigt, nÃ¥r du vil forhindre visse udbydere i at blive indlÃ¦st, deres legitimationsoplysninger er tilgÃ¦ngelige.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "disabled_providers": ["openai", "gemini"]
+}
+```
+
+:::note
+`disabled_providers` har prioritet over `enabled_providers`.
+:::
+
+Indstillingen `disabled_providers` accepterer en rÃ¦kke udbyder-id'er. NÃ¥r en udbyder er deaktiveret:
+
+- Den vil ikke blive indlÃ¦st, selvom miljÃ¸variabler er indstillet.
+- Den vil ikke blive indlÃ¦st, selvom API-nÃ¸gler er konfigureret via `/connect`-kommandoen.
+- Udbyderens modeller vises ikke pÃ¥ modelvalgslisten.
+
+---
+
+### Aktiverede udbydere (`enabled_providers`)
+
+Du kan angive en tilladelsesliste over udbydere gennem muligheden `enabled_providers`. NÃ¥r den er indstillet, vil kun de angivne udbydere blive aktiveret, og alle andre vil blive ignoreret.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "enabled_providers": ["anthropic", "openai"]
+}
+```
+
+Dette er nyttigt, nÃ¥r du vil begrÃ¦nse OpenCode til kun at bruge specifikke udbydere i stedet for at deaktivere dem Ã©n efter Ã©n.
+
+:::note
+`disabled_providers` har prioritet over `enabled_providers`.
+:::
+
+Hvis en udbyder optrÃ¦der i bÃ¥de `enabled_providers` og `disabled_providers`, har `disabled_providers` prioritet for bagudkompatibilitet.
+
+---
+
+### Eksperimentel (`experimental`)
+
+NÃ¸glen `experimental` indeholder muligheder, der er under aktiv udvikling.
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "experimental": {}
+}
+```
+
+:::caution
+Eksperimentelle muligheder er ikke stabile. De kan Ã¦ndres eller fjernes uden varsel.
+:::
+
+---
+
+## Variabler
+
+Du kan bruge variabelsubstitution i dine konfigurationsfiler til at referere til miljÃ¸variabler og filindhold.
+
+---
+
+### MiljÃ¸variabler
+
+Brug `{env:VARIABLE_NAME}` til at erstatte miljÃ¸variabler:
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "{env:AO1_MODEL}",
+  "provider": {
+    "anthropic": {
+      "models": {},
+      "options": {
+        "apiKey": "{env:ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Hvis miljÃ¸variablen ikke er indstillet, vil den blive erstattet med en tom streng.
+
+---
+
+### Filer
+
+Brug `{file:path/to/file}` til at erstatte indholdet af en fil:
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["./custom-instructions.md"],
+  "provider": {
+    "openai": {
+      "options": {
+        "apiKey": "{file:~/.secrets/openai-key}"
+      }
+    }
+  }
+}
+```
+
+Filstier kan vÃ¦re:
+
+- I forhold til konfigurationsfilbiblioteket
+- Eller absolutte stier, der starter med `/` eller `~`
+
+Disse er nyttige til:
+
+- Opbevaring af fÃ¸lsomme data som API-nÃ¸gler i separate filer.
+- Inklusiv store instruktionsfiler uden at rode i din konfiguration.
+- Deling af fÃ¦lles konfigurationsuddrag pÃ¥ tvÃ¦rs af flere konfigurationsfiler.

@@ -1,0 +1,429 @@
+﻿---
+title: TUI
+description: Utilisation de lâ€™interface utilisateur du terminal OpenCode.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components"
+
+OpenCode fournit une interface de terminal interactif ou TUI pour travailler sur vos projets avec un LLM.
+
+Lâ€™exÃ©cution de OpenCode dÃ©marre le TUI pour le rÃ©pertoire actuel.
+
+```bash
+opencode
+```
+
+Ou vous pouvez le dÃ©marrer pour un rÃ©pertoire de travail spÃ©cifique.
+
+```bash
+opencode /path/to/project
+```
+
+Une fois que vous Ãªtes dans le TUI, vous pouvez lui envoyer un message.
+
+```text
+Give me a quick summary of the codebase.
+```
+
+---
+
+## RÃ©fÃ©rences de fichiers
+
+Vous pouvez rÃ©fÃ©rencer des fichiers dans vos messages en utilisant `@`. Cela effectue une recherche de fichier floue dans le rÃ©pertoire de travail actuel.
+
+:::tip
+Vous pouvez Ã©galement utiliser `@` pour rÃ©fÃ©rencer des fichiers dans vos messages.
+:::
+
+```text "@packages/functions/src/api/index.ts"
+How is auth handled in @packages/functions/src/api/index.ts?
+```
+
+Le contenu du fichier est automatiquement ajoutÃ© Ã  la conversation.
+
+---
+
+## Commandes Bash
+
+DÃ©marrez un message avec `!` pour exÃ©cuter une commande shell.
+
+```bash frame="none"
+!ls -la
+```
+
+Le rÃ©sultat de la commande est ajoutÃ© Ã  la conversation en tant que rÃ©sultat de l'outil.
+
+---
+
+## Commandes
+
+Lorsque vous utilisez le OpenCode TUI, vous pouvez taper `/` suivi d'un nom de commande pour exÃ©cuter rapidement des actions. Par exemple:
+
+```bash frame="none"
+/help
+```
+
+La plupart des commandes ont Ã©galement une liaison clavier utilisant `ctrl+x` comme touche leader, oÃ¹ `ctrl+x` est la touche leader par dÃ©faut. [En savoir plus](/docs/keybinds).
+
+Voici toutes les commandes slash disponiblesÂ :
+
+---
+
+### connect
+
+Ajoutez un fournisseur Ã  OpenCode. Vous permet de sÃ©lectionner parmi les fournisseurs disponibles et dâ€™ajouter leurs clÃ©s API.
+
+```bash frame="none"
+/connect
+```
+
+---
+
+### compact
+
+Compactez la session en cours. *Alias*Â : `/summarize`
+
+```bash frame="none"
+/compact
+```
+
+**Reliure de touchesÂ :** `ctrl+x c`
+
+---
+
+### details
+
+Basculer les dÃ©tails d'exÃ©cution de l'outil.
+
+```bash frame="none"
+/details
+```
+
+**Reliure de touchesÂ :** `ctrl+x d`
+
+---
+
+### editor
+
+Ouvrez un Ã©diteur externe pour rÃ©diger des messages. Utilise l'Ã©diteur dÃ©fini dans votre variable d'environnement `EDITOR`. [En savoir plus](#editor-setup).
+
+```bash frame="none"
+/editor
+```
+
+**Reliure de touchesÂ :** `ctrl+x e`
+
+---
+
+### exit
+
+Quittez OpenCode. *Alias*Â : `/quit`, `/q`
+
+```bash frame="none"
+/exit
+```
+
+**Reliure de touchesÂ :** `ctrl+x q`
+
+---
+
+### export
+
+Exportez la conversation en cours vers Markdown et ouvrez-la dans votre Ã©diteur par dÃ©faut. Utilise l'Ã©diteur dÃ©fini dans votre variable d'environnement `EDITOR`. [En savoir plus](#editor-setup).
+
+```bash frame="none"
+/export
+```
+
+**Reliure de touchesÂ :** `ctrl+x x`
+
+---
+
+### help
+
+Afficher la boÃ®te de dialogue d'aide.
+
+```bash frame="none"
+/help
+```
+
+**Reliure de touchesÂ :** `ctrl+x h`
+
+---
+
+### init
+
+CrÃ©ez ou mettez Ã  jour le fichier `AGENTS.md`. [En savoir plus](/docs/rules).
+
+```bash frame="none"
+/init
+```
+
+**Reliure de touchesÂ :** `ctrl+x i`
+
+---
+
+### models
+
+Liste des modÃ¨les disponibles.
+
+```bash frame="none"
+/models
+```
+
+**Reliure de touchesÂ :** `ctrl+x m`
+
+---
+
+### new
+
+DÃ©marrez une nouvelle session. *Alias*Â : `/clear`
+
+```bash frame="none"
+/new
+```
+
+**Reliure de touchesÂ :** `ctrl+x n`
+
+---
+
+### redo
+
+Refaire un message prÃ©cÃ©demment annulÃ©. Disponible uniquement aprÃ¨s avoir utilisÃ© `/undo`.
+
+:::tip
+Toutes les modifications de fichiers seront Ã©galement restaurÃ©es.
+:::
+
+En interne, cela utilise Git pour gÃ©rer les modifications de fichiers. Votre projet **doit donc
+Ãªtre un dÃ©pÃ´t Git**.
+
+```bash frame="none"
+/redo
+```
+
+**Reliure de touchesÂ :** `ctrl+x r`
+
+---
+
+### sessions
+
+RÃ©pertoriez et basculez entre les sessions. *Alias*Â : `/resume`, `/continue`
+
+```bash frame="none"
+/sessions
+```
+
+**Reliure de touchesÂ :** `ctrl+x l`
+
+---
+
+### share
+
+Partager la session en cours. [En savoir plus](/docs/share).
+
+```bash frame="none"
+/share
+```
+
+**Reliure de touchesÂ :** `ctrl+x s`
+
+---
+
+### theme
+
+RÃ©pertoriez les thÃ¨mes disponibles.
+
+```bash frame="none"
+/theme
+```
+
+**Reliure de touchesÂ :** `ctrl+x t`
+
+---
+
+### thinking
+
+Activez/dÃ©sactivez la visibilitÃ© des blocages de rÃ©flexion/raisonnement dans la conversation. Lorsque cette option est activÃ©e, vous pouvez voir le processus de raisonnement du modÃ¨le pour les modÃ¨les prenant en charge la rÃ©flexion Ã©tendue.
+
+:::note
+Cette commande contrÃ´le uniquement si les blocs de rÃ©flexion sont **affichÃ©s**Â ; elle n'active ni ne dÃ©sactive les capacitÃ©s de raisonnement du modÃ¨le. Pour basculer entre les capacitÃ©s de raisonnement rÃ©elles, utilisez `ctrl+t` pour parcourir les variantes du modÃ¨le.
+:::
+
+```bash frame="none"
+/thinking
+```
+
+---
+
+### undo
+
+Annuler le dernier message de la conversation. Supprime le message utilisateur le plus rÃ©cent, toutes les rÃ©ponses ultÃ©rieures et toutes les modifications de fichier.
+
+:::tip
+Toutes les modifications apportÃ©es au fichier seront Ã©galement annulÃ©es.
+:::
+
+En interne, cela utilise Git pour gÃ©rer les modifications de fichiers. Votre projet **doit donc
+Ãªtre un dÃ©pÃ´t Git**.
+
+```bash frame="none"
+/undo
+```
+
+**Reliure de touchesÂ :** `ctrl+x u`
+
+---
+
+### unshare
+
+Annuler le partage de la session en cours. [En savoir plus](/docs/share#un-sharing).
+
+```bash frame="none"
+/unshare
+```
+
+---
+
+## Configuration de l'Ã©diteur
+
+Les commandes `/editor` et `/export` utilisent l'Ã©diteur spÃ©cifiÃ© dans votre variable d'environnement `EDITOR`.
+
+<Tabs>
+  <TabItem label="Linux/macOS">
+    ```bash
+    # Example for nano or vim
+    export EDITOR=nano
+    export EDITOR=vim
+
+    # For GUI editors, VS Code, Cursor, VSCodium, Windsurf, Zed, etc.
+    # include --wait
+    export EDITOR="code --wait"
+    ```
+
+Pour le rendre permanent, ajoutez-le Ã  votre profil shellÂ ;
+`~/.bashrc`, `~/.zshrc`, etc.
+
+  </TabItem>
+
+  <TabItem label="Windows (CMD)">
+    ```bash
+    set EDITOR=notepad
+
+    # For GUI editors, VS Code, Cursor, VSCodium, Windsurf, Zed, etc.
+    # include --wait
+    set EDITOR=code --wait
+    ```
+
+Pour le rendre permanent, utilisez **PropriÃ©tÃ©s systÃ¨me** > **Environnement
+Variables**.
+
+  </TabItem>
+
+  <TabItem label="Windows (PowerShell)">
+    ```powershell
+    $env:EDITOR = "notepad"
+
+    # For GUI editors, VS Code, Cursor, VSCodium, Windsurf, Zed, etc.
+    # include --wait
+    $env:EDITOR = "code --wait"
+    ```
+
+Pour le rendre permanent, ajoutez-le Ã  votre profil PowerShell.
+
+  </TabItem>
+</Tabs>
+
+Les options d'Ã©diteur populaires incluentÂ :
+
+- `code`-Code Visual Studio
+- `cursor` - Curseur
+- `windsurf` - Planche Ã  voile
+- `nvim` - Editeur Neovim
+- `vim` - Ã‰diteur Vim
+- `nano` - Ã‰diteur nano
+- `notepad` - Windows Bloc-notes
+- `subl` - Texte sublime
+
+:::note
+Certains Ã©diteurs comme VS Code doivent Ãªtre dÃ©marrÃ©s avec le drapeau `--wait`.
+:::
+
+Certains Ã©diteurs ont besoin d'arguments de ligne de commande pour s'exÃ©cuter en mode blocage. L'indicateur `--wait` bloque le processus de l'Ã©diteur jusqu'Ã  sa fermeture.
+
+---
+
+## Configurer
+
+Vous pouvez personnaliser le comportement de TUI via `tui.json` (ou `tui.jsonc`).
+
+```json title="tui.json"
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "theme": "opencode",
+  "leader_timeout": 2000,
+  "keybinds": {
+    "leader": "ctrl+x",
+    "command_list": "ctrl+p"
+  },
+  "scroll_speed": 3,
+  "scroll_acceleration": {
+    "enabled": false
+  },
+  "diff_style": "auto",
+  "mouse": true,
+  "attention": {
+    "enabled": true,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.4,
+    "sound_pack": "opencode.default",
+    "sounds": {
+      "error": "./sounds/error.mp3"
+    }
+  }
+}
+```
+
+Ceci est sÃ©parÃ© de `opencode.json`, qui configure le comportement du serveur/d'exÃ©cution.
+
+`keybinds` est fusionnÃ© avec les valeurs par dÃ©faut intÃ©grÃ©es, vous ne devez donc configurer que les raccourcis que vous souhaitez modifier.
+
+### Options
+
+- `theme` - DÃ©finit votre thÃ¨me d'interface utilisateur. [En savoir plus](/docs/themes).
+- `keybinds` - Personnalise les raccourcis clavier. [En savoir plus](/docs/keybinds).
+- `leader_timeout` - ContrÃ´le la durÃ©e pendant laquelle OpenCode attend aprÃ¨s la leader key. Valeur par dÃ©fautÂ : `2000`.
+- `scroll_acceleration.enabled` - Activez l'accÃ©lÃ©ration de dÃ©filement de style macOS pour un dÃ©filement fluide et naturel. Lorsqu'elle est activÃ©e, la vitesse de dÃ©filement augmente avec les gestes de dÃ©filement rapides et reste prÃ©cise pour les mouvements plus lents. **Ce paramÃ¨tre est prioritaire sur `scroll_speed` et le remplace lorsqu'il est activÃ©.**
+- `scroll_speed` - ContrÃ´le la vitesse de dÃ©filement du TUI lors de l'utilisation des commandes de dÃ©filement (minimumÂ : `0.001`, prend en charge les valeurs dÃ©cimales). La valeur par dÃ©faut est `3`. **RemarqueÂ : Ceci est ignorÃ© si `scroll_acceleration.enabled` est dÃ©fini sur `true`.**
+- `diff_style` - ContrÃ´le le rendu diffÃ©rentiel. `"auto"` s'adapte Ã  la largeur du terminal, `"stacked"` affiche toujours une seule colonne.
+- `mouse` - Active ou dÃ©sactive la capture de la souris dans le TUI (valeur par dÃ©fautÂ : `true`). Lorsque cette option est dÃ©sactivÃ©e, le comportement natif du terminal pour la sÃ©lection et le dÃ©filement Ã  la souris est conservÃ©.
+- `attention` - Configure les notifications de bureau et les sons du TUI. DÃ©sactivÃ© par dÃ©faut.
+
+Utilisez `AO1_TUI_CONFIG` pour charger un chemin de configuration TUI personnalisÃ©.
+
+### Attention
+
+Attention permet au TUI de vous prÃ©venir quand OpenCode attend une rÃ©ponse, une autorisation, qu'une erreur de session doit Ãªtre consultÃ©e ou qu'une session est terminÃ©e. Activez-le avec `attention.enabled` ; les Ã©vÃ©nements intÃ©grÃ©s jouent un son lorsqu'ils se produisent. Les notifications de bureau ne sont envoyÃ©es que lorsque la fenÃªtre du terminal n'est pas au premier plan, et elles ne sont pas utilisÃ©es pour les Ã©vÃ©nements de subagent.
+
+- `enabled` - Active toutes les notifications et tous les sons d'Attention. Valeur par dÃ©fautÂ : `false`.
+- `notifications` - Lorsque Attention est activÃ©, autorise le TUI Ã  envoyer des notifications de bureau via le terminal. Valeur par dÃ©fautÂ : `true`.
+- `sound` - Lorsque Attention est activÃ©, autorise la lecture des sons d'alerte. Valeur par dÃ©fautÂ : `true`.
+- `volume` - Volume par dÃ©faut des sons, de `0` Ã  `1`. Valeur par dÃ©fautÂ : `0.4`.
+- `sound_pack` - ID du sound pack Ã  utiliser. Valeur par dÃ©fautÂ : `opencode.default`.
+- `sounds` - DÃ©finit des fichiers sonores personnalisÃ©s pour `default`, `question`, `permission`, `error`, `done` ou `subagent_done`. Les chemins peuvent Ãªtre absolus, des URL `file://` ou relatifs Ã  `tui.json`.
+
+---
+
+## Personnalisation
+
+Vous pouvez personnaliser divers aspects de la vue TUI Ã  l'aide de la palette de commandes (`ctrl+x h` ou `/help`). Ces paramÃ¨tres persistent lors des redÃ©marrages.
+
+---
+
+#### Affichage du nom d'utilisateur
+
+Indiquez si votre nom d'utilisateur apparaÃ®t dans les messages de discussion. AccÃ©dez-y viaÂ :
+
+- Palette de commandesÂ : recherchez "nom d'utilisateur" ou "masquer le nom d'utilisateur"
+- Le paramÃ¨tre persiste automatiquement et sera mÃ©morisÃ© au cours de TUI sessions.

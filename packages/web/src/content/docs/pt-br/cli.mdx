@@ -1,0 +1,616 @@
+﻿---
+title: CLI
+description: OpÃ§Ãµes e comandos da CLI do opencode.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components"
+
+A CLI do opencode, por padrÃ£o, inicia o [TUI](/docs/tui) quando executada sem argumentos.
+
+```bash
+opencode
+```
+
+Mas tambÃ©m aceita comandos conforme documentado nesta pÃ¡gina. Isso permite que vocÃª interaja com o opencode programaticamente.
+
+```bash
+opencode run "Explain how closures work in JavaScript"
+```
+
+---
+
+### tui
+
+Inicie a interface de usuÃ¡rio do terminal do opencode.
+
+```bash
+opencode [project]
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                     | Curto | DescriÃ§Ã£o                                                                  |
+| ---------------------------------------- | ----- | -------------------------------------------------------------------------- |
+| <nobr><code>{"--continue"}</code></nobr> | `-c`  | Continue a Ãºltima sessÃ£o                                                   |
+| <nobr><code>{"--session"}</code></nobr>  | `-s`  | ID da sessÃ£o para continuar                                                |
+| <nobr><code>{"--fork"}</code></nobr>     |       | Criar um fork da sessÃ£o ao continuar (use com `--continue` ou `--session`) |
+| <nobr><code>{"--prompt"}</code></nobr>   |       | Prompt a ser usado                                                         |
+| <nobr><code>{"--model"}</code></nobr>    | `-m`  | Modelo a ser usado na forma de provider/model                              |
+| <nobr><code>{"--agent"}</code></nobr>    |       | Agente a ser usado                                                         |
+| <nobr><code>{"--port"}</code></nobr>     |       | Porta para escutar                                                         |
+| <nobr><code>{"--hostname"}</code></nobr> |       | Nome do host para escutar                                                  |
+
+---
+
+## Comandos
+
+A CLI do opencode tambÃ©m possui os seguintes comandos.
+
+---
+
+### agent
+
+Gerencie agentes para o opencode.
+
+```bash
+opencode agent [command]
+```
+
+---
+
+### attach
+
+Anexe um terminal a um servidor backend do opencode jÃ¡ em execuÃ§Ã£o, iniciado via comandos `serve` ou `web`.
+
+```bash
+opencode attach [url]
+```
+
+Isso permite usar o TUI com um backend opencode remoto. Por exemplo:
+
+```bash
+# Inicie o servidor backend para acesso web/mobile
+opencode web --port 4096 --hostname 0.0.0.0
+
+# Em outro terminal, anexe o TUI ao backend em execuÃ§Ã£o
+opencode attach http://10.20.30.40:4096
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                     | Curto | DescriÃ§Ã£o                                                                         |
+| ---------------------------------------- | ----- | --------------------------------------------------------------------------------- |
+| <nobr><code>{"--dir"}</code></nobr>      |       | DiretÃ³rio de trabalho para iniciar o TUI                                          |
+| <nobr><code>{"--continue"}</code></nobr> | `-c`  | Continuar a Ãºltima sessÃ£o                                                         |
+| <nobr><code>{"--session"}</code></nobr>  | `-s`  | ID da sessÃ£o para continuar                                                       |
+| <nobr><code>{"--fork"}</code></nobr>     |       | Bifurcar a sessÃ£o ao continuar (use com `--continue` ou `--session`)              |
+| <nobr><code>{"--password"}</code></nobr> | `-p`  | Senha de autenticaÃ§Ã£o bÃ¡sica (padrÃ£o: `AO1_SERVER_PASSWORD`)                 |
+| <nobr><code>{"--username"}</code></nobr> | `-u`  | UsuÃ¡rio de autenticaÃ§Ã£o bÃ¡sica (padrÃ£o: `AO1_SERVER_USERNAME` ou `opencode`) |
+
+---
+
+#### create
+
+Crie um novo agente com configuraÃ§Ã£o personalizada.
+
+```bash
+opencode agent create
+```
+
+Este comando irÃ¡ guiÃ¡-lo na criaÃ§Ã£o de um novo agente com um prompt de sistema personalizado e configuraÃ§Ã£o de ferramentas.
+
+---
+
+#### list
+
+Liste todos os agentes disponÃ­veis.
+
+```bash
+opencode agent list
+```
+
+---
+
+### auth
+
+Comando para gerenciar credenciais e login para provedores.
+
+```bash
+opencode auth [command]
+```
+
+---
+
+#### login
+
+O opencode Ã© alimentado pela lista de provedores em [Models.dev](https://models.dev), entÃ£o vocÃª pode usar `opencode auth login` para configurar chaves de API para qualquer provedor que vocÃª gostaria de usar. Isso Ã© armazenado em `~/.local/share/opencode/auth.json`.
+
+```bash
+opencode auth login
+```
+
+Quando o opencode Ã© iniciado, ele carrega os provedores do arquivo de credenciais. E se houver chaves definidas em seus ambientes ou em um arquivo `.env` em seu projeto.
+
+---
+
+#### list
+
+Lista todos os provedores autenticados conforme armazenado no arquivo de credenciais.
+
+```bash
+opencode auth list
+```
+
+Ou a versÃ£o curta.
+
+```bash
+opencode auth ls
+```
+
+---
+
+#### logout
+
+Desconecta vocÃª de um provedor limpando-o do arquivo de credenciais.
+
+```bash
+opencode auth logout
+```
+
+---
+
+### github
+
+Gerencie o agente do GitHub para automaÃ§Ã£o de repositÃ³rios.
+
+```bash
+opencode github [command]
+```
+
+---
+
+#### install
+
+Instale o agente do GitHub em seu repositÃ³rio.
+
+```bash
+opencode github install
+```
+
+Isso configura o fluxo de trabalho necessÃ¡rio do GitHub Actions e o guia pelo processo de configuraÃ§Ã£o. [Saiba mais](/docs/github).
+
+---
+
+#### run
+
+Execute o agente do GitHub. Isso Ã© tipicamente usado em GitHub Actions.
+
+```bash
+opencode github run
+```
+
+##### OpÃ§Ãµes
+
+| Flag                                  | DescriÃ§Ã£o                                        |
+| ------------------------------------- | ------------------------------------------------ |
+| <nobr><code>{"--event"}</code></nobr> | Evento simulado do GitHub para executar o agente |
+| <nobr><code>{"--token"}</code></nobr> | Token de acesso pessoal do GitHub                |
+
+---
+
+### mcp
+
+Gerencie servidores do Model Context Protocol.
+
+```bash
+opencode mcp [command]
+```
+
+---
+
+#### add
+
+Adicione um servidor MCP Ã  sua configuraÃ§Ã£o.
+
+```bash
+opencode mcp add
+```
+
+Este comando irÃ¡ guiÃ¡-lo na adiÃ§Ã£o de um servidor MCP local ou remoto.
+
+---
+
+#### list
+
+Liste todos os servidores MCP configurados e seu status de conexÃ£o.
+
+```bash
+opencode mcp list
+```
+
+Ou use a versÃ£o curta.
+
+```bash
+opencode mcp ls
+```
+
+---
+
+#### auth
+
+Autentique-se com um servidor MCP habilitado para OAuth.
+
+```bash
+opencode mcp auth [name]
+```
+
+Se vocÃª nÃ£o fornecer um nome de servidor, serÃ¡ solicitado que vocÃª selecione entre os servidores disponÃ­veis habilitados para OAuth.
+
+VocÃª tambÃ©m pode listar servidores habilitados para OAuth e seu status de autenticaÃ§Ã£o.
+
+```bash
+opencode mcp auth list
+```
+
+Ou use a versÃ£o curta.
+
+```bash
+opencode mcp auth ls
+```
+
+---
+
+#### logout
+
+Remova credenciais OAuth para um servidor MCP.
+
+```bash
+opencode mcp logout [name]
+```
+
+---
+
+#### debug
+
+Depure problemas de conexÃ£o OAuth para um servidor MCP.
+
+```bash
+opencode mcp debug <name>
+```
+
+---
+
+### models
+
+Liste todos os modelos disponÃ­veis dos provedores configurados.
+
+```bash
+opencode models [provider]
+```
+
+Este comando exibe todos os modelos disponÃ­veis entre seus provedores configurados no formato `provider/model`.
+
+Isso Ã© Ãºtil para descobrir o nome exato do modelo a ser usado em [sua configuraÃ§Ã£o](/docs/config/).
+
+VocÃª pode opcionalmente passar um ID de provedor para filtrar modelos por esse provedor.
+
+```bash
+opencode models anthropic
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                    | DescriÃ§Ã£o                                                             |
+| --------------------------------------- | --------------------------------------------------------------------- |
+| <nobr><code>{"--refresh"}</code></nobr> | Atualiza o cache de modelos a partir do models.dev                    |
+| <nobr><code>{"--verbose"}</code></nobr> | Use uma saÃ­da de modelo mais detalhada (inclui metadados como custos) |
+
+Use a flag `--refresh` para atualizar a lista de modelos em cache. Isso Ã© Ãºtil quando novos modelos foram adicionados a um provedor e vocÃª deseja vÃª-los no opencode.
+
+```bash
+opencode models --refresh
+```
+
+---
+
+### run
+
+Execute o opencode em modo nÃ£o interativo passando um prompt diretamente.
+
+```bash
+opencode run [message..]
+```
+
+Isso Ã© Ãºtil para scripts, automaÃ§Ã£o ou quando vocÃª deseja uma resposta rÃ¡pida sem iniciar o TUI completo. Por exemplo.
+
+```bash "opencode run"
+opencode run Explique o uso de context em Go
+```
+
+VocÃª tambÃ©m pode se anexar a uma instÃ¢ncia em execuÃ§Ã£o do `opencode serve` para evitar tempos de inicializaÃ§Ã£o a frio do servidor MCP em cada execuÃ§Ã£o:
+
+```bash
+# Inicie um servidor sem cabeÃ§a em um terminal
+opencode serve
+
+# Em outro terminal, execute comandos que se anexam a ele
+opencode run --attach http://localhost:4096 "Explique async/await em JavaScript"
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                     | Curto | DescriÃ§Ã£o                                                                         |
+| ---------------------------------------- | ----- | --------------------------------------------------------------------------------- |
+| <nobr><code>{"--command"}</code></nobr>  |       | O comando a ser executado, use mensagem para argumentos                           |
+| <nobr><code>{"--continue"}</code></nobr> | `-c`  | Continue a Ãºltima sessÃ£o                                                          |
+| <nobr><code>{"--session"}</code></nobr>  | `-s`  | ID da sessÃ£o para continuar                                                       |
+| <nobr><code>{"--fork"}</code></nobr>     |       | Criar um fork da sessÃ£o ao continuar (use com `--continue` ou `--session`)        |
+| <nobr><code>{"--share"}</code></nobr>    |       | Compartilhe a sessÃ£o                                                              |
+| <nobr><code>{"--model"}</code></nobr>    | `-m`  | Modelo a ser usado na forma de provider/model                                     |
+| <nobr><code>{"--agent"}</code></nobr>    |       | Agente a ser usado                                                                |
+| <nobr><code>{"--file"}</code></nobr>     | `-f`  | Arquivo(s) a serem anexados Ã  mensagem                                            |
+| <nobr><code>{"--format"}</code></nobr>   |       | Formato: padrÃ£o (formatado) ou json (eventos JSON brutos)                         |
+| <nobr><code>{"--title"}</code></nobr>    |       | TÃ­tulo para a sessÃ£o (usa o prompt truncado se nenhum valor for fornecido)        |
+| <nobr><code>{"--attach"}</code></nobr>   |       | Anexe a um servidor opencode em execuÃ§Ã£o (por exemplo, http://localhost:4096)     |
+| <nobr><code>{"--password"}</code></nobr> | `-p`  | Senha de autenticaÃ§Ã£o bÃ¡sica (padrÃ£o: `AO1_SERVER_PASSWORD`)                 |
+| <nobr><code>{"--username"}</code></nobr> | `-u`  | UsuÃ¡rio de autenticaÃ§Ã£o bÃ¡sica (padrÃ£o: `AO1_SERVER_USERNAME` ou `opencode`) |
+| <nobr><code>{"--dir"}</code></nobr>      |       | DiretÃ³rio de execuÃ§Ã£o, ou caminho no servidor remoto ao anexar                    |
+| <nobr><code>{"--variant"}</code></nobr>  |       | Variante do modelo (nÃ­vel de raciocÃ­nio especÃ­fico do provedor)                   |
+| <nobr><code>{"--thinking"}</code></nobr> |       | Mostrar blocos de pensamento                                                      |
+| <nobr><code>{"--port"}</code></nobr>     |       | Porta para o servidor local (padrÃ£o para porta aleatÃ³ria)                         |
+
+---
+
+### serve
+
+Inicie um servidor opencode sem cabeÃ§a para acesso Ã  API. Confira a [documentaÃ§Ã£o do servidor](/docs/server) para a interface HTTP completa.
+
+```bash
+opencode serve
+```
+
+Isso inicia um servidor HTTP que fornece acesso Ã  funcionalidade do opencode sem a interface TUI. Defina `AO1_SERVER_PASSWORD` para habilitar a autenticaÃ§Ã£o bÃ¡sica HTTP (o nome de usuÃ¡rio padrÃ£o Ã© `opencode`).
+
+#### OpÃ§Ãµes
+
+| Flag                                     | DescriÃ§Ã£o                                             |
+| ---------------------------------------- | ----------------------------------------------------- |
+| <nobr><code>{"--port"}</code></nobr>     | Porta para escutar                                    |
+| <nobr><code>{"--hostname"}</code></nobr> | Nome do host para escutar                             |
+| <nobr><code>{"--mdns"}</code></nobr>     | Habilitar descoberta mDNS                             |
+| <nobr><code>{"--cors"}</code></nobr>     | Origem(ns) de navegador adicionais para permitir CORS |
+
+---
+
+### session
+
+Gerencie sessÃµes do opencode.
+
+```bash
+opencode session [command]
+```
+
+---
+
+#### list
+
+Liste todas as sessÃµes do opencode.
+
+```bash
+opencode session list
+```
+
+##### OpÃ§Ãµes
+
+| Flag                                      | Curto | DescriÃ§Ã£o                                 |
+| ----------------------------------------- | ----- | ----------------------------------------- |
+| <nobr><code>{"--max-count"}</code></nobr> | `-n`  | Limitar Ã s N sessÃµes mais recentes        |
+| <nobr><code>{"--format"}</code></nobr>    |       | Formato de saÃ­da: tabela ou json (tabela) |
+
+---
+
+### stats
+
+Mostre o uso de tokens e estatÃ­sticas de custo para suas sessÃµes do opencode.
+
+```bash
+opencode stats
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                    | DescriÃ§Ã£o                                                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| <nobr><code>{"--days"}</code></nobr>    | Mostre estatÃ­sticas dos Ãºltimos N dias (todo o tempo)                                                |
+| <nobr><code>{"--tools"}</code></nobr>   | NÃºmero de ferramentas a serem mostradas (todas)                                                      |
+| <nobr><code>{"--models"}</code></nobr>  | Mostre a divisÃ£o do uso de modelos (oculto por padrÃ£o). Passe um nÃºmero para mostrar os N principais |
+| <nobr><code>{"--project"}</code></nobr> | Filtrar por projeto (todos os projetos, string vazia: projeto atual)                                 |
+
+---
+
+### export
+
+Exporte dados da sessÃ£o como JSON.
+
+```bash
+opencode export [sessionID]
+```
+
+Se vocÃª nÃ£o fornecer um ID de sessÃ£o, serÃ¡ solicitado que vocÃª selecione entre as sessÃµes disponÃ­veis.
+
+---
+
+### import
+
+Importe dados da sessÃ£o de um arquivo JSON ou URL de compartilhamento do opencode.
+
+```bash
+opencode import <file>
+```
+
+VocÃª pode importar de um arquivo local ou de uma URL de compartilhamento do opencode.
+
+```bash
+opencode import session.json
+opencode import https://opncd.ai/s/abc123
+```
+
+---
+
+### web
+
+Inicie um servidor opencode sem cabeÃ§a com uma interface web.
+
+```bash
+opencode web
+```
+
+Isso inicia um servidor HTTP e abre um navegador para acessar o opencode atravÃ©s de uma interface web. Defina `AO1_SERVER_PASSWORD` para habilitar a autenticaÃ§Ã£o bÃ¡sica HTTP (o nome de usuÃ¡rio padrÃ£o Ã© `opencode`).
+
+#### OpÃ§Ãµes
+
+| Flag                                     | DescriÃ§Ã£o                                             |
+| ---------------------------------------- | ----------------------------------------------------- |
+| <nobr><code>{"--port"}</code></nobr>     | Porta para escutar                                    |
+| <nobr><code>{"--hostname"}</code></nobr> | Nome do host para escutar                             |
+| <nobr><code>{"--mdns"}</code></nobr>     | Habilitar descoberta mDNS                             |
+| <nobr><code>{"--cors"}</code></nobr>     | Origem(ns) de navegador adicionais para permitir CORS |
+
+---
+
+### acp
+
+Inicie um servidor ACP (Agent Client Protocol).
+
+```bash
+opencode acp
+```
+
+Este comando inicia um servidor ACP que se comunica via stdin/stdout usando nd-JSON.
+
+#### OpÃ§Ãµes
+
+| Flag                                     | DescriÃ§Ã£o                 |
+| ---------------------------------------- | ------------------------- |
+| <nobr><code>{"--cwd"}</code></nobr>      | DiretÃ³rio de trabalho     |
+| <nobr><code>{"--port"}</code></nobr>     | Porta para escutar        |
+| <nobr><code>{"--hostname"}</code></nobr> | Nome do host para escutar |
+
+---
+
+### uninstall
+
+Desinstale o opencode e remova todos os arquivos relacionados.
+
+```bash
+opencode uninstall
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                        | Curto | DescriÃ§Ã£o                                |
+| ------------------------------------------- | ----- | ---------------------------------------- |
+| <nobr><code>{"--keep-config"}</code></nobr> | `-c`  | Manter arquivos de configuraÃ§Ã£o          |
+| <nobr><code>{"--keep-data"}</code></nobr>   | `-d`  | Manter dados de sessÃ£o e snapshots       |
+| <nobr><code>{"--dry-run"}</code></nobr>     |       | Mostrar o que seria removido sem remover |
+| <nobr><code>{"--force"}</code></nobr>       | `-f`  | Pular prompts de confirmaÃ§Ã£o             |
+
+---
+
+### upgrade
+
+Atualiza o opencode para a versÃ£o mais recente ou uma versÃ£o especÃ­fica.
+
+```bash
+opencode upgrade [target]
+```
+
+Para atualizar para a versÃ£o mais recente.
+
+```bash
+opencode upgrade
+```
+
+Para atualizar para uma versÃ£o especÃ­fica.
+
+```bash
+opencode upgrade v0.1.48
+```
+
+#### OpÃ§Ãµes
+
+| Flag                                   | Curto | DescriÃ§Ã£o                                                        |
+| -------------------------------------- | ----- | ---------------------------------------------------------------- |
+| <nobr><code>{"--method"}</code></nobr> | `-m`  | O mÃ©todo de instalaÃ§Ã£o que foi usado; curl, npm, pnpm, bun, brew |
+
+---
+
+## OpÃ§Ãµes Globais
+
+A CLI do opencode aceita as seguintes flags globais.
+
+| Flag                                       | Curto | DescriÃ§Ã£o                               |
+| ------------------------------------------ | ----- | --------------------------------------- |
+| <nobr><code>{"--help"}</code></nobr>       | `-h`  | Exibir ajuda                            |
+| <nobr><code>{"--version"}</code></nobr>    | `-v`  | Imprimir nÃºmero da versÃ£o               |
+| <nobr><code>{"--print-logs"}</code></nobr> |       | Imprimir logs no stderr                 |
+| <nobr><code>{"--log-level"}</code></nobr>  |       | NÃ­vel de log (DEBUG, INFO, WARN, ERROR) |
+
+---
+
+## VariÃ¡veis de ambiente
+
+O opencode pode ser configurado usando variÃ¡veis de ambiente.
+
+| VariÃ¡vel                              | Tipo    | DescriÃ§Ã£o                                                             |
+| ------------------------------------- | ------- | --------------------------------------------------------------------- |
+| `AO1_AUTO_SHARE`                 | boolean | Compartilhar sessÃµes automaticamente                                  |
+| `AO1_GIT_BASH_PATH`              | string  | Caminho para o executÃ¡vel do Git Bash no Windows                      |
+| `AO1_CONFIG`                     | string  | Caminho para o arquivo de configuraÃ§Ã£o                                |
+| `AO1_CONFIG_DIR`                 | string  | Caminho para o diretÃ³rio de configuraÃ§Ã£o                              |
+| `AO1_CONFIG_CONTENT`             | string  | ConteÃºdo de configuraÃ§Ã£o json inline                                  |
+| `AO1_DISABLE_AUTOUPDATE`         | boolean | Desabilitar verificaÃ§Ãµes de atualizaÃ§Ã£o automÃ¡tica                    |
+| `AO1_DISABLE_PRUNE`              | boolean | Desabilitar a poda de dados antigos                                   |
+| `AO1_DISABLE_TERMINAL_TITLE`     | boolean | Desabilitar atualizaÃ§Ãµes automÃ¡ticas do tÃ­tulo do terminal            |
+| `AO1_PERMISSION`                 | string  | ConfiguraÃ§Ã£o de permissÃµes json inline                                |
+| `AO1_DISABLE_DEFAULT_PLUGINS`    | boolean | Desabilitar plugins padrÃ£o                                            |
+| `AO1_DISABLE_LSP_DOWNLOAD`       | boolean | Desabilitar downloads automÃ¡ticos do servidor LSP                     |
+| `AO1_ENABLE_EXPERIMENTAL_MODELS` | boolean | Habilitar modelos experimentais                                       |
+| `AO1_DISABLE_AUTOCOMPACT`        | boolean | Desabilitar compactaÃ§Ã£o automÃ¡tica de contexto                        |
+| `AO1_DISABLE_CLAUDE_CODE`        | boolean | Desabilitar leitura de `.claude` (prompt + habilidades)               |
+| `AO1_DISABLE_CLAUDE_CODE_PROMPT` | boolean | Desabilitar leitura de `~/.claude/CLAUDE.md`                          |
+| `AO1_DISABLE_CLAUDE_CODE_SKILLS` | boolean | Desabilitar carregamento de `.claude/skills`                          |
+| `AO1_DISABLE_MODELS_FETCH`       | boolean | Desabilitar busca de modelos de fontes remotas                        |
+| `AO1_FAKE_VCS`                   | string  | Provedor VCS falso para fins de teste                                 |
+| `AO1_CLIENT`                     | string  | Identificador do cliente (padrÃ£o Ã© `cli`)                             |
+| `AO1_ENABLE_EXA`                 | boolean | Habilitar ferramentas de busca web Exa                                |
+| `AO1_SERVER_PASSWORD`            | string  | Habilitar autenticaÃ§Ã£o bÃ¡sica para `serve`/`web`                      |
+| `AO1_SERVER_USERNAME`            | string  | Substituir nome de usuÃ¡rio de autenticaÃ§Ã£o bÃ¡sica (padrÃ£o `opencode`) |
+| `AO1_MODELS_URL`                 | string  | URL personalizada para buscar configuraÃ§Ã£o de modelos                 |
+
+---
+
+### Experimental
+
+Essas variÃ¡veis de ambiente habilitam recursos experimentais que podem mudar ou ser removidos.
+
+| VariÃ¡vel                                        | Tipo    | DescriÃ§Ã£o                                                 |
+| ----------------------------------------------- | ------- | --------------------------------------------------------- |
+| `AO1_EXPERIMENTAL`                         | boolean | Habilitar recursos experimentais sob o sinalizador global |
+| `AO1_EXPERIMENTAL_ICON_DISCOVERY`          | boolean | Habilitar descoberta de Ã­cones                            |
+| `AO1_EXPERIMENTAL_DISABLE_COPY_ON_SELECT`  | boolean | Desabilitar cÃ³pia ao selecionar no TUI                    |
+| `AO1_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | number  | Tempo limite padrÃ£o para comandos bash em ms              |
+| `AO1_EXPERIMENTAL_OUTPUT_TOKEN_MAX`        | number  | MÃ¡ximo de tokens de saÃ­da para respostas LLM              |
+| `AO1_EXPERIMENTAL_FILEWATCHER`             | boolean | Habilitar monitoramento de arquivos para todo o diretÃ³rio |
+| `AO1_EXPERIMENTAL_OXFMT`                   | boolean | Habilitar formatador oxfmt                                |
+| `AO1_EXPERIMENTAL_LSP_TOOL`                | boolean | Habilitar ferramenta LSP experimental                     |
+| `AO1_EXPERIMENTAL_DISABLE_FILEWATCHER`     | boolean | Desabilitar monitoramento de arquivos                     |
+| `AO1_EXPERIMENTAL_EXA`                     | boolean | Habilitar recursos experimentais do Exa                   |
+| `AO1_EXPERIMENTAL_LSP_TY`                  | boolean | Habilitar TY LSP para arquivos python                     |
+| `AO1_EXPERIMENTAL_PLAN_MODE`               | boolean | Habilitar modo de plano                                   |
+| `AO1_EXPERIMENTAL_BACKGROUND_SUBAGENTS`    | boolean | Habilitar tarefas de subagentes em segundo plano          |
+| `AO1_EXPERIMENTAL_EVENT_SYSTEM`            | boolean | Habilitar sistema de eventos experimental                 |
+| `AO1_EXPERIMENTAL_NATIVE_LLM`              | boolean | Habilitar caminho nativo de requisiÃ§Ã£o LLM                |
+| `AO1_EXPERIMENTAL_PARALLEL`                | boolean | Habilitar execuÃ§Ã£o paralela de busca web                  |
+| `AO1_EXPERIMENTAL_SCOUT`                   | boolean | Habilitar subagente Scout                                 |
+| `AO1_EXPERIMENTAL_WORKSPACES`              | boolean | Habilitar suporte a espaÃ§os de trabalho                   |

@@ -1,0 +1,142 @@
+﻿---
+title: Web
+description: KoriÅ¡Ä‡enje OpenCode u vaÅ¡em pretraÅ¾ivaÄu.
+---
+
+OpenCode moÅ¾e raditi kao web aplikacija u vaÅ¡em pretraÅ¾ivaÄu, pruÅ¾ajuÄ‡i isto moÄ‡no iskustvo AI kodiranja bez potrebe za terminalom.
+
+![OpenCode Web - Nova sesija](../../../assets/web/web-homepage-new-session.png)
+
+## PoÄetak rada
+
+Pokrenite web interfejs tako Å¡to Ä‡ete pokrenuti:
+
+```bash
+opencode web
+```
+
+Ovo pokreÄ‡e lokalni server na `127.0.0.1` sa nasumiÄnim dostupnim portom i automatski otvara OpenCode u vaÅ¡em podrazumevanom pretraÅ¾ivaÄu.
+
+:::caution
+Ako `AO1_SERVER_PASSWORD` nije postavljen, server Ä‡e biti nezaÅ¡tiÄ‡en. Ovo je u redu za lokalnu upotrebu, ali bi trebalo biti postavljeno za pristup mreÅ¾i.
+:::
+
+:::tip[Windows korisnici]
+Za najbolje iskustvo, pokrenite `opencode web` iz [WSL](/docs/windows-wsl) umjesto PowerShell-a. Ovo osigurava pravilan pristup sistemu datoteka i integraciju terminala.
+:::
+
+---
+
+## Konfiguracija
+
+MoÅ¾ete konfigurirati web server koristeÄ‡i oznake komandne linije ili u vaÅ¡oj [config file](/docs/config).
+
+### Port
+
+OpenCode podrazumevano bira dostupni port. MoÅ¾ete odrediti port:
+
+```bash
+opencode web --port 4096
+```
+
+### Ime hosta
+
+Podrazumevano, server se vezuje za `127.0.0.1` (samo lokalni host). Da biste OpenCode uÄinili dostupnim na vaÅ¡oj mreÅ¾i:
+
+```bash
+opencode web --hostname 0.0.0.0
+```
+
+Kada koristite `0.0.0.0`, OpenCode Ä‡e prikazati i lokalne i mreÅ¾ne adrese:
+
+```
+  Local access:       http://localhost:4096
+  Network access:     http://192.168.1.100:4096
+```
+
+### mDNS Otkrivanje
+
+OmoguÄ‡ite mDNS kako bi vaÅ¡ server bio vidljiv na lokalnoj mreÅ¾i:
+
+```bash
+opencode web --mdns
+```
+
+Ovo automatski postavlja ime hosta na `0.0.0.0` i oglaÅ¡ava server kao `opencode.local`.
+
+MoÅ¾ete prilagoditi ime mDNS domene za pokretanje viÅ¡e instanci na istoj mreÅ¾i:
+
+```bash
+opencode web --mdns --mdns-domain myproject.local
+```
+
+### CORS
+
+Da biste omoguÄ‡ili dodatne domene za CORS (korisno za prilagoÄ‘ene frontendove):
+
+```bash
+opencode web --cors https://example.com
+```
+
+### Autentifikacija
+
+Da biste zaÅ¡titili pristup, postavite lozinku koristeÄ‡i varijablu okruÅ¾enja `AO1_SERVER_PASSWORD`:
+
+```bash
+AO1_SERVER_PASSWORD=secret opencode web
+```
+
+KorisniÄko ime podrazumevano je `opencode`, ali se moÅ¾e promeniti sa `AO1_SERVER_USERNAME`.
+
+---
+
+## KoriÅ¡tenje web suÄelja
+
+Jednom pokrenut, web suÄelje pruÅ¾a pristup vaÅ¡im OpenCode sesijama.
+
+### Sesije
+
+Pregledajte i upravljajte svojim sesijama sa poÄetne stranice. MoÅ¾ete vidjeti aktivne sesije i zapoÄeti nove.
+
+![OpenCode Web - aktivna sesija](../../../assets/web/web-homepage-active-session.png)
+
+### Status servera
+
+Kliknite "Pogledajte servere" da vidite povezane servere i njihov status.
+
+![OpenCode Web - Vidi servere](../../../assets/web/web-homepage-see-servers.png)
+
+---
+
+## Povezivanje terminala
+
+MoÅ¾ete prikljuÄiti TUI terminala na aktivni web server:
+
+```bash
+# Start the web server
+opencode web --port 4096
+
+# In another terminal, attach the TUI
+opencode attach http://localhost:4096
+```
+
+Ovo vam omoguÄ‡ava da istovremeno koristite i web suÄelje i terminal, dijeleÄ‡i iste sesije i stanje.
+
+---
+
+## Konfiguracioni fajl
+
+TakoÄ‘er moÅ¾ete konfigurirati postavke servera u svom `opencode.json` konfiguracijskom fajlu:
+
+```json
+{
+  "server": {
+    "port": 4096,
+    "hostname": "0.0.0.0",
+    "mdns": true,
+    "cors": ["https://example.com"]
+  }
+}
+```
+
+Oznake komandne linije imaju prednost nad postavkama konfiguracione datoteke.
