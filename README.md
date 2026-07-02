@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://ao1.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
   <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/yeyeyebo7-maker/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/yeyeyebo7-maker/opencode/publish.yml?style=flat-square&branch=dev" /></a>
+  <a href="https://github.com/yeyeyebo7-maker/AO1.AI/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/yeyeyebo7-maker/AO1.AI/publish.yml?style=flat-square&branch=dev" /></a>
 </p>
 
 
@@ -21,14 +21,14 @@
 
 ### Installation
 
-# Run the batch file to install the required things. [Download](https://github.com/yeyeyebo7-maker/opencode/releases/tag/AO1)
+# Run the batch file to install the required things. [Download](https://github.com/yeyeyebo7-maker/AO1.AI/releases/tag/AO1)
 
 > [!TIP]
 > Remove versions older than 0.1.x before installing.
 
 ### Desktop App (BETA)
 
-OpenCode is also available as a desktop application. Download directly from the [releases page](https://github.com/yeyeyebo7-maker/opencode/releases/tag/AO1)
+OpenCode is also available as a desktop application. Download directly from the [releases page](https://github.com/yeyeyebo7-maker/AO1.AI/releases/tag/AO1)
 
 | Platform              | Download                           |
 | --------------------- | ---------------------------------- |
