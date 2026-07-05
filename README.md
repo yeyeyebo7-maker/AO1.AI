@@ -16,7 +16,7 @@
 
 ---
 
-### AO1 AI — Windows Installation
+# AO1 AI — Windows Installation
 
 ## Requirements
 
@@ -26,7 +26,13 @@
 
 ## Step-by-step
 
-### 1. Install Bun
+### 1. Install Git
+
+Download from **[git-scm.com/downloads/win](https://git-scm.com/downloads/win)**
+
+Run the installer — all default settings are fine. Reopen your Command Prompt after install.
+
+### 2. Install Bun
 
 Open **PowerShell** and run:
 
