@@ -16,9 +16,66 @@
 
 ---
 
-### Installation
+### AO1 AI — Windows Installation
 
-# Run the batch file to install the required things. [Download](https://github.com/yeyeyebo7-maker/AO1.AI/releases/tag/AO1)
+## Requirements
+
+- Windows 10 or 11
+- [Git](https://git-scm.com/downloads/win)
+- 10+ GB free disk space
+
+## Step-by-step
+
+### 1. Install Bun
+
+Open **PowerShell** and run:
+
+```powershell
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+
+Close and reopen PowerShell after install.
+
+### 2. Clone the repo
+
+Open **Command Prompt** and run:
+
+```cmd
+git clone https://github.com/yeyeyebo7-maker/AO1.AI.git %USERPROFILE%\Documents\ao1
+```
+
+### 3. Install dependencies
+
+```cmd
+cd %USERPROFILE%\Documents\ao1 && bun install
+```
+
+This downloads ~100 packages. May take a few minutes.
+
+### 4. Launch AO1
+
+Double-click `AO1.exe` on your Desktop.
+
+Or run from Command Prompt:
+
+```cmd
+cd %USERPROFILE%\Documents\ao1\packages\ao1 && bun run --conditions=browser src/index.ts
+```
+
+## Updating
+
+To update to the latest version:
+
+```cmd
+cd %USERPROFILE%\Documents\ao1 && git pull && bun install
+```
+
+## Uninstall
+
+1. Delete `%USERPROFILE%\.bun` folder
+2. Delete `%USERPROFILE%\Documents\ao1` folder
+3. Delete `AO1.exe` from your Desktop
+
 
 > [!TIP]
 > Remove versions older than 0.1.x before installing.
